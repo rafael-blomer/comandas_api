@@ -1,0 +1,31 @@
+#Rafael Ceccatto Blomer
+### Verbo GET – listar todos
+GET http://localhost:8000/produto/ HTTP/1.1
+
+### Verbo GET – listar um
+GET http://localhost:8000/produto/10 HTTP/1.1
+
+### Verbo DELETE - excluir
+DELETE http://127.0.0.1:8000/produto/3 HTTP/1.1
+
+### Verbo POST – adicionar
+POST http://127.0.0.1:8000/produto/ HTTP/1.1
+content-type: application/json
+
+{
+    "nome" : "banana",
+    "descricao" : "fruta",
+    "valor_unitario": 1.50,
+    "foto" : "b'89PNG\r\n1a\n'"
+}
+
+### Verbo PUT – atualiza
+PUT http://127.0.0.1:8000/produto/3 HTTP/1.1
+content-type: application/json
+
+{
+    "nome" : "banana",
+    "descricao" : "fruta",
+    "valor_unitario": 1.50,
+    "foto" : "b'89PNG\r\n1a\n'"
+}
