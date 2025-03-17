@@ -1,5 +1,5 @@
 #Rafael Ceccatto Blomer
-@token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYmMiLCJleHAiOjE3MTIwODcwMTd9.UGVKOrjcoc4ZS5gQ42VKld11jXKMGX-ikYad4-vuT3w
+@token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYmMiLCJleHAiOjE3NDIyNjU5NTV9.s2yH75W4v8lLIvGrKE_5cVqMOzMT9aHR5yIqS3LytzQ
 
 ### Verbo GET – listar todos
 GET http://localhost:8000/funcionario/ HTTP/1.1
@@ -18,9 +18,11 @@ curl -X 'POST' 'http://127.0.0.1:8000/token' \
 
 ### Verbo GET – listar um
 GET http://localhost:8000/funcionario/1 HTTP/1.1
+Authorization: Bearer {{token}}
 
 ### Verbo POST – adicionar
 POST http://127.0.0.1:8000/funcionario/ HTTP/1.1
+Authorization: Bearer {{token}}
 content-type: application/json
 
 {
@@ -34,6 +36,7 @@ content-type: application/json
 
 ### Verbo PUT – atualiza
 PUT http://127.0.0.1:8000/funcionario/1 HTTP/1.1
+Authorization: Bearer {{token}}
 content-type: application/json
 
 {
@@ -47,3 +50,4 @@ content-type: application/json
 
 ### Verbo DELETE - excluir
 DELETE http://127.0.0.1:8000/funcionario/1 HTTP/1.1
+Authorization: Bearer {{token}}
