@@ -1,7 +1,6 @@
 #Rafael Ceccatto Blomer
 from fastapi import FastAPI
 from settings import HOST, PORT, RELOAD
-import uvicorn
 
 # import das classes com as rotas/endpoints
 import security
@@ -31,8 +30,8 @@ app = FastAPI(lifespan=lifespan)
 # rota padrão
 @app.get("/")
 async def root():
-    return {"detail": "API Comandas", "Swagger UI": "http://127.0.0.1:8000/docs", "ReDoc":
-"http://127.0.0.1:8000/redoc"}
+    return {"detail": "API Comandas", "Swagger UI": "https://127.0.0.1:4443/docs", "ReDoc":
+"https://127.0.0.1:4443/redoc"}
 
 # mapeamento das rotas/endpoints
 app.include_router(security.router)
@@ -42,4 +41,20 @@ app.include_router(ProdutoDAO.router)
 app.include_router(ComandaDAO.router)
 
 if __name__ == "__main__":
-    uvicorn.run('main:app', host=HOST, port=int(PORT), reload=RELOAD)
+    import ssl
+    import hypercorn.asyncio
+    from hypercorn.config import Config
+    import asyncio
+
+    ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+    ssl_context.load_cert_chain(certfile=r"cert\cert.pem", keyfile=r"cert\ecc-key.pem")
+
+    config = Config()
+    config.bind = ["0.0.0.0:4443"]
+    config.quic_bind = ["0.0.0.0:4443"]
+    #config.insecure_bind = ["0.0.0.0:8000"]
+    config.certfile = r"cert\cert.pem"
+    config.keyfile = r"cert\ecc-key.pem"
+    config.alpn_protocols = ["h2","h3"]
+    
+    asyncio.run(hypercorn.asyncio.serve(app, config))
