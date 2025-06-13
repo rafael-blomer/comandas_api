@@ -1,16 +1,17 @@
-#Rafael Ceccatto Blomer
+# Rafael Ceccatto Blomer
 from fastapi import APIRouter
 from domain.entities.Funcionario import Funcionario
 # import da persistência
 import db
 from infra.orm.FuncionarioModel import FuncionarioDB
+import bcrypt
 
 # import da segurança
 from typing import Annotated
 from fastapi import Depends
 from security import get_current_active_user, User
 
-#router = APIRouter()
+# router = APIRouter()
 # dependências de forma global
 router = APIRouter( dependencies=[Depends(get_current_active_user)] )
 
@@ -96,19 +97,32 @@ async def delete_funcionario(id: int):
     finally:
         session.close()
 
+
 # valida o cpf e senha informado pelo usuário
 @router.post("/funcionario/login/", tags=["Funcionário - Login"])
 async def login_funcionario(corpo: Funcionario):
     try:
         session = db.Session()
-        # one(), requer que haja apenas um resultado no conjunto de resultados
-        # é um erro se o banco de dados retornar 0, 2 ou mais resultados e uma exceção será gerada
-        dados = session.query(FuncionarioDB).filter(FuncionarioDB.cpf == corpo.cpf).filter(FuncionarioDB.senha == corpo.senha).one()
-        return dados, 200
+        funcionario = (
+            session.query(FuncionarioDB).filter(FuncionarioDB.cpf == corpo.cpf).one()
+        )
+
+        if not bcrypt.checkpw(
+            corpo.senha.encode("utf-8"), funcionario.senha.encode("utf-8")
+        ):
+            return {"erro": "Senha inválida"}, 401
+
+        return {
+            "nome": funcionario.nome,
+            "grupo": "funcionario",
+            "cpf": funcionario.cpf,
+        }, 200
+
     except Exception as e:
         return {"erro": str(e)}, 400
     finally:
         session.close()
+
 
 # verifica se o CPF informado já esta cadastrado, retornado os dados atuais caso já esteja
 @router.get("/funcionario/cpf/{cpf}", tags=["Funcionário - Valida CPF"])
